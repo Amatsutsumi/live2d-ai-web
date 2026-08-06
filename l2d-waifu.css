@@ -1,0 +1,516 @@
+/* ============================================================================
+ *  Live2D 看板娘插件 · 样式
+ *  ---------------------------------------------------------------------------
+ *  引入方式： <link rel="stylesheet" href="l2d-waifu.css" />
+ * ========================================================================== */
+
+#l2d-waifu-root {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  /* 模型缩放变量：由 JS 根据 config.model.scale 动态写入。
+     菜单/统一气泡/简要发送框/聊天框/状态标签与模型的间距会随之联动缩放：
+     模型放大 → 距离拉大，模型缩小 → 距离收近，避免卡进模型或离得太远。 */
+  --l2d-scale: 1;
+  --l2d-ui-gap: calc(10px * var(--l2d-scale));    /* 菜单与模型的水平间距 */
+  --l2d-status-gap: calc(6px * var(--l2d-scale)); /* 状态标签与模型底部的间距 */
+  --l2d-chat-gap: calc(14px * var(--l2d-scale));  /* 聊天框与模型的间距 */
+  --l2d-bubble-gap: calc(10px * var(--l2d-scale));/* 统一气泡与模型的间距 */
+  --l2d-quickbar-gap: calc(14px * var(--l2d-scale)); /* 简要发送框与模型的间距 */
+  font-family: system-ui, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+/* ===================== 看板娘画布 ===================== */
+.l2d-waifu__box {
+  position: relative;
+  width: fit-content;
+}
+
+.l2d-waifu__canvas {
+  display: block;
+  cursor: default;
+  transition: filter .3s;
+}
+.l2d-waifu__draggable .l2d-waifu__canvas {
+  cursor: grab;
+}
+.l2d-waifu__draggable .l2d-waifu__canvas:active {
+  cursor: grabbing;
+}
+
+/* ===================== 统一气泡（合并后的模型回复气泡） =====================
+ * 需求：把"头顶白色气泡"与"模型回复灰色框"合并为一个气泡。
+ * 思考中提示（"让我想想…"）、模型回复文字、状态提示都显示在这里。 */
+.l2d-waifu__bubble {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: calc(-1 * var(--l2d-bubble-gap));
+  transform: translate(-50%, -100%);
+  max-width: clamp(160px, calc(260px * var(--l2d-scale)), 420px);
+  max-height: clamp(100px, calc(160px * var(--l2d-scale)), 240px);
+  overflow: hidden auto;
+  padding: clamp(6px, calc(10px * var(--l2d-scale)), 16px) clamp(10px, calc(14px * var(--l2d-scale)), 22px);
+  background: rgba(35, 40, 60, .92);
+  color: #fff;
+  font-size: clamp(12px, calc(13px * var(--l2d-scale)), 18px);
+  line-height: 1.7;
+  border-radius: clamp(10px, calc(14px * var(--l2d-scale)), 22px);
+  box-shadow: 0 10px 28px rgba(20, 24, 40, .35);
+  word-break: break-word;
+  white-space: pre-wrap;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity .25s;
+}
+.l2d-waifu__bubble.show {
+  display: block;
+  opacity: 1;
+}
+
+/* 状态小标签 */
+.l2d-waifu__status {
+  position: absolute;
+  left: 50%;
+  bottom: var(--l2d-status-gap);
+  transform: translateX(-50%);
+  padding: clamp(1px, calc(2px * var(--l2d-scale)), 4px) clamp(6px, calc(10px * var(--l2d-scale)), 16px);
+  font-size: clamp(10px, calc(11px * var(--l2d-scale)), 15px);
+  color: #8a93a8;
+  background: rgba(255, 255, 255, .82);
+  border-radius: clamp(14px, calc(20px * var(--l2d-scale)), 32px);
+  box-shadow: 0 2px 8px rgba(80, 90, 140, .12);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.l2d-waifu__status--error {
+  color: #d33;
+}
+
+/* 聊天框/简要发送框展开时：隐藏统一气泡，避免叠框 */
+.l2d-waifu__box.chat-open .l2d-waifu__bubble,
+.l2d-waifu__box.quickbar-open .l2d-waifu__bubble {
+  opacity: 0 !important;
+  visibility: hidden;
+  transition: opacity .2s, visibility .2s;
+}
+
+/* ===================== 布局 ===================== */
+.l2d-waifu__wrap {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+/* 模型左侧的小菜单 */
+.l2d-waifu__side-menu {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, calc(6px * var(--l2d-scale)), 12px);
+  padding: 0 calc(6px * var(--l2d-scale)) 0 0;
+  align-self: center;
+}
+.l2d-waifu__side-menu button {
+  border: none;
+  width: clamp(24px, calc(32px * var(--l2d-scale)), 52px);
+  height: clamp(24px, calc(32px * var(--l2d-scale)), 52px);
+  font-size: clamp(13px, calc(15px * var(--l2d-scale)), 24px);
+  border-radius: 50%;
+  cursor: pointer;
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 3px 10px rgba(40, 50, 90, .18);
+  transition: all .18s;
+}
+.l2d-waifu__side-menu button:hover {
+  background: #5b8cff;
+  transform: translateX(-2px);
+  box-shadow: 0 4px 12px rgba(91, 140, 255, .4);
+}
+
+/* ===================== 聊天面板（悬浮在模型头顶） ===================== */
+.l2d-waifu__chat {
+  position: absolute;
+  bottom: calc(100% + var(--l2d-chat-gap));   /* 完全悬浮在模型上方，间距随模型缩放联动，绝不遮挡模型 */
+  left: 50%;
+  transform: translate(-50%, 10px);
+  width: clamp(240px, calc(300px * var(--l2d-scale)), 420px);
+  max-width: calc(100vw - 24px);
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, .97);
+  border-radius: clamp(12px, calc(18px * var(--l2d-scale)), 28px);
+  box-shadow: 0 12px 44px rgba(40, 50, 90, .28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(200, 210, 235, .6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+  z-index: 20;
+}
+.l2d-waifu__chat.open {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+/* 顶部越界时翻转到模型下方 */
+.l2d-waifu__chat.below {
+  bottom: auto;
+  top: calc(100% + var(--l2d-chat-gap));
+}
+
+/* 头部 */
+.l2d-waifu__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid #eef0f6;
+  cursor: pointer;
+}
+.l2d-waifu__avatar {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe0ec, #ffd6e6);
+  box-shadow: inset 0 0 0 2px #fff, 0 2px 6px rgba(255, 150, 190, .35);
+}
+.l2d-waifu__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #3a4155;
+  flex: 1;
+}
+.l2d-waifu__toggle {
+  border: none;
+  background: transparent;
+  color: #9aa3ba;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.l2d-waifu__toggle:hover { background: #f0f2f8; color: #55607a; }
+
+/* 消息区 */
+.l2d-waifu__msgs {
+  flex: 1;
+  min-height: 140px;
+  max-height: 42vh;
+  overflow-y: auto;
+  padding: 12px 14px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #d7dbe8 transparent;
+}
+.l2d-waifu__msgs::-webkit-scrollbar { width: 5px; }
+.l2d-waifu__msgs::-webkit-scrollbar-thumb { background: #d7dbe8; border-radius: 4px; }
+
+.l2d-waifu__msg {
+  display: flex;
+  max-width: 86%;
+  animation: l2d-waifu-pop .22s ease;
+}
+.l2d-waifu__msg--user { align-self: flex-end; justify-content: flex-end; }
+.l2d-waifu__msg--ai { align-self: flex-start; }
+
+.l2d-waifu__msg-bubble {
+  padding: 9px 13px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  word-break: break-word;
+  white-space: pre-wrap;
+  border-radius: 14px;
+}
+.l2d-waifu__msg--user .l2d-waifu__msg-bubble {
+  background: linear-gradient(135deg, #6ea8ff, #5b8cff);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 3px 10px rgba(91, 140, 255, .3);
+}
+.l2d-waifu__msg--ai .l2d-waifu__msg-bubble {
+  background: #f1f3f9;
+  color: #38415a;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 8px rgba(60, 70, 110, .06);
+}
+
+@keyframes l2d-waifu-pop {
+  from { opacity: 0; transform: translateY(6px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 思考中动画 */
+.l2d-waifu__thinking {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 13px 15px;
+}
+.l2d-waifu__thinking span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #9aa6c4;
+  animation: l2d-waifu-blink 1.2s infinite ease-in-out;
+}
+.l2d-waifu__thinking span:nth-child(2) { animation-delay: .15s; }
+.l2d-waifu__thinking span:nth-child(3) { animation-delay: .3s; }
+@keyframes l2d-waifu-blink {
+  0%, 80%, 100% { opacity: .25; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-3px); }
+}
+
+/* 快捷提问 */
+.l2d-waifu__quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 14px 4px;
+}
+.l2d-waifu__quick-btn {
+  border: 1px solid #e2e6f0;
+  background: #f7f9ff;
+  color: #5a6b8c;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.l2d-waifu__quick-btn:hover {
+  background: #5b8cff;
+  color: #fff;
+  border-color: #5b8cff;
+  transform: translateY(-1px);
+}
+
+/* 输入区 */
+.l2d-waifu__inputbar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px 8px;
+}
+.l2d-waifu__input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 13px;
+  font-size: 13.5px;
+  color: #33405c;
+  border: 1.5px solid #e0e4ef;
+  border-radius: 20px;
+  outline: none;
+  background: #fafbff;
+  transition: border-color .2s, box-shadow .2s;
+}
+.l2d-waifu__input:focus {
+  border-color: #5b8cff;
+  box-shadow: 0 0 0 3px rgba(91, 140, 255, .15);
+  background: #fff;
+}
+.l2d-waifu__input:disabled {
+  background: #f0f1f6;
+  color: #b6bccb;
+  cursor: not-allowed;
+}
+.l2d-waifu__send {
+  border: none;
+  padding: 0 18px;
+  font-size: 13.5px;
+  color: #fff;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #6ea8ff, #5b8cff);
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 3px 10px rgba(91, 140, 255, .35);
+}
+.l2d-waifu__send:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.l2d-waifu__send:disabled {
+  background: #cdd3e4;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===================== 简要发送小框（沉浸式快速对话） =====================
+ * 需求：菜单新增"简要发送"，只弹一个小输入框让用户给 AI 发消息，
+ * 更有真人对话的沉浸感；用完自动隐藏，不影响大聊天框。 */
+.l2d-waifu__quickbar {
+  position: absolute;
+  bottom: calc(100% + var(--l2d-quickbar-gap));
+  left: 50%;
+  transform: translate(-50%, 10px);
+  width: clamp(220px, calc(260px * var(--l2d-scale)), 380px);
+  max-width: calc(100vw - 24px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, .97);
+  border-radius: clamp(18px, calc(24px * var(--l2d-scale)), 34px);
+  box-shadow: 0 10px 32px rgba(40, 50, 90, .22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(200, 210, 235, .6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 20;
+}
+.l2d-waifu__quickbar.open {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+.l2d-waifu__quickbar-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 14px;
+  font-size: 13.5px;
+  color: #33405c;
+  border: 1.5px solid #e0e4ef;
+  border-radius: 20px;
+  outline: none;
+  background: #fafbff;
+  transition: border-color .2s, box-shadow .2s;
+}
+.l2d-waifu__quickbar-input:focus {
+  border-color: #5b8cff;
+  box-shadow: 0 0 0 3px rgba(91, 140, 255, .15);
+  background: #fff;
+}
+.l2d-waifu__quickbar-input::placeholder {
+  color: #a7b0c4;
+}
+.l2d-waifu__quickbar-send {
+  border: none;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  font-size: 15px;
+  color: #fff;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6ea8ff, #5b8cff);
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 3px 10px rgba(91, 140, 255, .35);
+}
+.l2d-waifu__quickbar-send:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+/* ===================== 隐藏模型后的常驻召唤按钮 ===================== */
+.l2d-waifu__summon {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  font-size: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: rgba(255, 255, 255, .95);
+  box-shadow: 0 6px 20px rgba(40, 50, 90, .3), 0 0 0 1px rgba(200, 210, 235, .6);
+  z-index: 99998;
+  opacity: 0;
+  transform: scale(.6);
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+}
+.l2d-waifu__summon.show {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+.l2d-waifu__summon:hover {
+  background: #5b8cff;
+}
+
+/* 小屏适配：聊天面板宽度自适应 */
+@media (max-width: 420px) {
+  .l2d-waifu__chat {
+    left: 50%;
+    width: 92vw;
+  }
+}
+
+/* ===================== 模型切换面板（纯白主题） ===================== */
+.l2d-waifu__model-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(3px);
+  z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.l2d-waifu__model-switcher {
+  background: linear-gradient(160deg, #ffffff, #f7faff);
+  border: 1px solid #e6eaf2;
+  border-radius: 16px;
+  padding: 22px 24px;
+  width: 300px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: #1f2533;
+  font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  box-shadow: 0 24px 60px rgba(30, 41, 59, 0.2);
+}
+.l2d-waifu__model-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.l2d-waifu__model-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.l2d-waifu__model-item {
+  background: #ffffff;
+  border: 1px solid #e6eaf2;
+  color: #1f2533;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+}
+.l2d-waifu__model-item:hover {
+  background: #f0f4fb;
+}
+.l2d-waifu__model-item.active {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+.l2d-waifu__model-close {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #cdd7e6;
+  color: #334155;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.l2d-waifu__model-close:hover {
+  background: #f0f4fb;
+}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Live2D 看板娘插件 · 在线演示</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #333;
+    min-height: 100vh;
+    background:
+      radial-gradient(1200px 600px at 20% 10%, #ffe9f3 0%, transparent 55%),
+      radial-gradient(1000px 500px at 85% 90%, #e7efff 0%, transparent 55%),
+      linear-gradient(180deg, #fafbfe 0%, #eef1f8 100%);
+    padding: 40px 24px 80px;
+  }
+  .page { max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 26px; color: #3a4155; margin-bottom: 6px; }
+  h1 .l2d-badge {
+    display: inline-block; vertical-align: middle;
+    font-size: 12px; font-weight: 600; color: #5b8cff;
+    background: rgba(91,140,255,.12); border: 1px solid rgba(91,140,255,.3);
+    border-radius: 20px; padding: 3px 12px; margin-left: 8px;
+  }
+  .sub { color: #8a93a8; font-size: 14px; margin-bottom: 24px; }
+  .card {
+    background: rgba(255,255,255,.85);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 30px rgba(60,70,110,.08);
+    border: 1px solid rgba(210,218,240,.6);
+  }
+  .card h2 { font-size: 16px; color: #55607a; margin-bottom: 10px; }
+  .card p, .card li { font-size: 13.5px; line-height: 1.8; color: #5a6580; }
+  .card ul { padding-left: 20px; }
+  code {
+    background: #eef1f8; color: #c0567a;
+    padding: 2px 6px; border-radius: 6px; font-size: 12.5px;
+  }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  .btn {
+    border: 1px solid #dfe4f0; background: #f7f9ff; color: #55607a;
+    padding: 8px 16px; border-radius: 10px; font-size: 13px; cursor: pointer;
+    transition: all .15s;
+  }
+  .btn:hover { background: #5b8cff; color: #fff; border-color: #5b8cff; }
+  .btn.active { background: #5b8cff; color: #fff; border-color: #5b8cff; }
+  .hint { font-size: 12px; color: #9aa3ba; margin-top: 10px; line-height: 1.7; }
+</style>
+
+<!-- 1. l2d 官方库 -->
+<script src="https://unpkg.com/l2d/dist/index.min.js"></script>
+<!-- 2. 配置文件 -->
+<script src="../config.js"></script>
+<!-- 3. 插件主文件 -->
+<script src="../l2d-waifu.js"></script>
+</head>
+<body>
+<div class="page">
+  <h1>🎀 Live2D 看板娘插件 <span class="l2d-badge">v1.3.0</span></h1>
+  <div class="sub">基于 l2d · 大模型对话 + TTS 语音 + 情绪动作 + 口型同步 + 可互动看板娘</div>
+
+  <div class="card">
+    <h2>🖼 当前模型</h2>
+    <p id="model-desc">读取配置中…</p>
+    <div class="btn-row">
+      <button class="btn active" id="btn-local">本地模型（随插件部署）</button>
+      <button class="btn" id="btn-remote">远程模型（jsDelivr CDN）</button>
+    </div>
+    <div class="hint">
+      💡 打开页面右下角即可看到看板娘，聊天框默认隐藏。<br>
+      💡 点击模型左侧 💬 召唤完整聊天框（记录聊天历史的大框，悬浮在模型头顶不遮挡）；点击 📝 召唤“简要发送”小框（沉浸式快速对话，只发消息，更有真人感）；点击 🔀 可切换模型（需后端配置模型绑定）。<br>
+      💡 头顶白色气泡已与模型回复气泡合并为一个统一气泡：思考中（"让我想想…"）、模型回复、状态提示都显示在同一个气泡里，界面更干净。<br>
+      💡 点击看板娘身体/头部 → 互动动作 + 模型自带语音（期间聊天框自动暂停，防止语音冲突）。<br>
+      💡 拖拽看板娘可任意移动位置；左侧菜单可开关语音、随机表情/动作、回到待机、隐藏。<br>
+      💡 隐藏看板娘后，右下角会保留 🙈 召唤按钮，点击即可召回。<br>
+      💡 发送消息 → 语音生成完毕后，文字（打字机）+ 语音 + 口型实时同步一起输出。
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📦 快速开始</h2>
+    <ul>
+      <li>把 <code>live2d-plugin/</code> 整个文件夹拷贝到你的网站 / Hexo 主题目录</li>
+      <li>在页面中依次引入 3 个文件（见页面源码）</li>
+      <li>按需修改 <code>config.js</code> 里的模型 / 接口 / 尺寸 / 位置等配置</li>
+      <li>详见仓库根目录 <code>README.md</code></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  /* 演示：切换本地 / 远程模型 */
+  var btnLocal = document.getElementById('btn-local');
+  var btnRemote = document.getElementById('btn-remote');
+  var desc = document.getElementById('model-desc');
+
+  function descText() {
+    var p = window.L2D_WAIFU_CONFIG.model.path;
+    desc.textContent = '当前加载地址：' + p;
+  }
+  descText();
+
+  btnLocal.addEventListener('click', function () {
+    btnLocal.classList.add('active'); btnRemote.classList.remove('active');
+    if (!window.L2DWaifu) return location.reload();
+    window.L2D_WAIFU_CONFIG.model.path = 'assets/models/hailunna/model0.json';
+    location.reload();
+  });
+  btnRemote.addEventListener('click', function () {
+    btnRemote.classList.add('active'); btnLocal.classList.remove('active');
+    window.L2D_WAIFU_CONFIG.model.path = 'https://fastly.jsdelivr.net/gh/Amatsutsumi/live2d-model@1.1/hailunna/model0.json';
+    location.reload();
+  });
+</script>
+</body>
+</html>

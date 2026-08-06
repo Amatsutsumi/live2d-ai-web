@@ -94,7 +94,7 @@ draggable: true             // 是否可拖拽
 
 ```js
 chat: {
-  api: 'https://api.yinghu.asia/api/chat',  // 接口地址
+  api: 'https://自定义后端域名/api/chat',  // 接口地址
   model: 'glm-4-flash',      // 模型名（智谱清言）
   temperature: 0.7,
   historySize: 8,            // 上下文轮数
@@ -111,7 +111,7 @@ chat: {
 ```js
 tts: {
   enabled: true,
-  api: 'https://api.yinghu.asia/api/tts',  // GET ?text=xxx 返回音频
+  api: 'https://自定义后端域名/api/tts',  // GET ?text=xxx 返回音频
   voice: '',                // 可选音色参数
   extraParams: {}           // 可选额外参数，如 { speed: '1.0' }
 }
@@ -329,6 +329,58 @@ live2d-plugin/
 ```
 
 ---
+## 关于后端部分：
+
+本项目的 AI 对话与语音合成功能，依赖于以下两个后端 API 接口。所有请求均通过 HTTPS 传输，确保通信安全。
+### 1. AI 对话接口 (Chat)
+接口地址：https://自定义域名/api/chat
+
+请求方法：POST
+
+请求头：Content-Type: application/json
+
+请求体格式：
+```
+{
+  "messages": [
+    { "role": "system", "content": "系统提示词" },
+    { "role": "user", "content": "用户消息" }
+  ]
+}
+```
+响应格式：兼容 OpenAI Chat Completions API 格式，插件会自动解析 choices[0].message.content 字段。
+
+说明：当前示例接口对接的是智谱清言 GLM-4-Flash 模型。你可以替换为自己的大模型接口，只要保持相同的请求/响应格式即可。
+
+### 2. 语音合成接口 (TTS)
+接口地址：https://自定义域名/api/tts
+
+请求方法：GET
+
+请求参数：
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `text` | string | 是 | 要合成语音的文本内容 |
+
+响应格式：直接返回音频流（如 MP3 或 WAV 格式），浏览器会自动播放。
+
+说明：语音合成在文字生成后自动触发，语音合成完毕后，文字与语音会同时输出。
+
+### 3. 自定义后端
+以上接口仅为示例，你完全可以在 config.js 中替换为自己的后端服务地址：
+
+```
+chat: {
+  api: 'https://你的域名/api/chat',  // 替换为你的对话接口
+  // ...
+},
+tts: {
+  api: 'https://你的域名/api/tts',   // 替换为你的语音接口
+  // ...
+}
+只要你的后端接口遵循上述请求/响应格式，插件即可无缝对接。
+```
 
 ## 🙏 致谢
 

@@ -2,8 +2,6 @@
 
 一个基于 [l2d](https://github.com/hacxy/l2d) 的智能 Live2D 看板娘插件，内置 **大模型对话 + TTS 语音 + 情绪动作系统 + 口型实时同步 + 可互动玩法**，开箱即用，支持 **Hexo 网站** 及 **任意网页**。
 
-> 🎥 在线演示：见仓库 `live2d-plugin/demo/index.html`（把 `live2d-plugin` 整个文件夹部署到任意静态服务器即可预览）。
-
 ---
 
 ## ✨ 功能特性

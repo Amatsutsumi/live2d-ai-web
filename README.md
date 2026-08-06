@@ -34,11 +34,10 @@
 live2d-plugin/
 ├── config.js            ← 配置文件（改这里！）
 ├── l2d-waifu.js         ← 插件主逻辑
-├── l2d-waifu.css        ← 样式（聊天框美化）
-├── demo/
-│   └── index.html       ← 在线演示页
+├── l2d-waifu.css        ← 样式（聊天框美化）      
 └── assets/models/
     └── hailunna/        ← 内置示例模型（海伦娜，可本地加载）
+    └── yuezhan/         ← 内置示例模型（狂三，可本地加载）
 ```
 
 ### 2. 在页面中引入

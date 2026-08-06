@@ -8,6 +8,15 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
+  /* 模型缩放变量：由 JS 根据 config.model.scale 动态写入。
+     菜单/统一气泡/简要发送框/聊天框/状态标签与模型的间距会随之联动缩放：
+     模型放大 → 距离拉大，模型缩小 → 距离收近，避免卡进模型或离得太远。 */
+  --l2d-scale: 1;
+  --l2d-ui-gap: calc(10px * var(--l2d-scale));    /* 菜单与模型的水平间距 */
+  --l2d-status-gap: calc(6px * var(--l2d-scale)); /* 状态标签与模型底部的间距 */
+  --l2d-chat-gap: calc(14px * var(--l2d-scale));  /* 聊天框与模型的间距 */
+  --l2d-bubble-gap: calc(10px * var(--l2d-scale));/* 统一气泡与模型的间距 */
+  --l2d-quickbar-gap: calc(14px * var(--l2d-scale)); /* 简要发送框与模型的间距 */
   font-family: system-ui, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -32,40 +41,48 @@
   cursor: grabbing;
 }
 
-/* 头顶状态气泡 */
-.l2d-waifu__tip {
+/* ===================== 统一气泡（合并后的模型回复气泡） =====================
+ * 需求：把"头顶白色气泡"与"模型回复灰色框"合并为一个气泡。
+ * 思考中提示（"让我想想…"）、模型回复文字、状态提示都显示在这里。 */
+.l2d-waifu__bubble {
+  display: none;
   position: absolute;
-  top: -8px;
   left: 50%;
+  top: calc(-1 * var(--l2d-bubble-gap));
   transform: translate(-50%, -100%);
-  max-width: 220px;
-  padding: 6px 12px;
-  background: rgba(255, 255, 255, .95);
-  color: #444;
-  font-size: 12px;
-  border-radius: 14px;
-  box-shadow: 0 6px 18px rgba(80, 90, 140, .18), 0 0 0 1px rgba(120, 140, 200, .12);
-  white-space: nowrap;
-  opacity: 0;
+  max-width: clamp(160px, calc(260px * var(--l2d-scale)), 420px);
+  max-height: clamp(100px, calc(160px * var(--l2d-scale)), 240px);
+  overflow: hidden auto;
+  padding: clamp(6px, calc(10px * var(--l2d-scale)), 16px) clamp(10px, calc(14px * var(--l2d-scale)), 22px);
+  background: rgba(35, 40, 60, .92);
+  color: #fff;
+  font-size: clamp(12px, calc(13px * var(--l2d-scale)), 18px);
+  line-height: 1.7;
+  border-radius: clamp(10px, calc(14px * var(--l2d-scale)), 22px);
+  box-shadow: 0 10px 28px rgba(20, 24, 40, .35);
+  word-break: break-word;
+  white-space: pre-wrap;
   pointer-events: none;
-  transition: opacity .25s, transform .25s;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity .25s;
 }
-.l2d-waifu__tip.show {
+.l2d-waifu__bubble.show {
+  display: block;
   opacity: 1;
-  transform: translate(-50%, -100%) translateY(2px);
 }
 
 /* 状态小标签 */
 .l2d-waifu__status {
   position: absolute;
   left: 50%;
-  bottom: 4px;
+  bottom: var(--l2d-status-gap);
   transform: translateX(-50%);
-  padding: 2px 10px;
-  font-size: 11px;
+  padding: clamp(1px, calc(2px * var(--l2d-scale)), 4px) clamp(6px, calc(10px * var(--l2d-scale)), 16px);
+  font-size: clamp(10px, calc(11px * var(--l2d-scale)), 15px);
   color: #8a93a8;
   background: rgba(255, 255, 255, .82);
-  border-radius: 20px;
+  border-radius: clamp(14px, calc(20px * var(--l2d-scale)), 32px);
   box-shadow: 0 2px 8px rgba(80, 90, 140, .12);
   pointer-events: none;
   white-space: nowrap;
@@ -74,27 +91,12 @@
   color: #d33;
 }
 
-/* 聊天气泡（语音时悬浮显示文字） */
-.l2d-waifu__bubble {
-  display: none;
-  position: absolute;
-  left: 50%;
-  top: -12px;
-  transform: translate(-50%, -100%);
-  max-width: 240px;
-  max-height: 160px;
-  overflow: hidden auto;
-  padding: 10px 14px;
-  background: rgba(35, 40, 60, .92);
-  color: #fff;
-  font-size: 13px;
-  line-height: 1.7;
-  border-radius: 14px;
-  box-shadow: 0 10px 28px rgba(20, 24, 40, .35);
-  word-break: break-word;
-  white-space: pre-wrap;
-  pointer-events: none;
-  z-index: 5;
+/* 聊天框/简要发送框展开时：隐藏统一气泡，避免叠框 */
+.l2d-waifu__box.chat-open .l2d-waifu__bubble,
+.l2d-waifu__box.quickbar-open .l2d-waifu__bubble {
+  opacity: 0 !important;
+  visibility: hidden;
+  transition: opacity .2s, visibility .2s;
 }
 
 /* ===================== 布局 ===================== */
@@ -108,15 +110,15 @@
 .l2d-waifu__side-menu {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 0 8px 4px 0;
+  gap: clamp(4px, calc(6px * var(--l2d-scale)), 12px);
+  padding: 0 calc(6px * var(--l2d-scale)) 0 0;
   align-self: center;
 }
 .l2d-waifu__side-menu button {
   border: none;
-  width: 32px;
-  height: 32px;
-  font-size: 15px;
+  width: clamp(24px, calc(32px * var(--l2d-scale)), 52px);
+  height: clamp(24px, calc(32px * var(--l2d-scale)), 52px);
+  font-size: clamp(13px, calc(15px * var(--l2d-scale)), 24px);
   border-radius: 50%;
   cursor: pointer;
   background: rgba(255, 255, 255, .9);
@@ -132,16 +134,16 @@
 /* ===================== 聊天面板（悬浮在模型头顶） ===================== */
 .l2d-waifu__chat {
   position: absolute;
-  bottom: calc(100% + 14px);   /* 完全悬浮在模型上方，绝不遮挡模型 */
+  bottom: calc(100% + var(--l2d-chat-gap));   /* 完全悬浮在模型上方，间距随模型缩放联动，绝不遮挡模型 */
   left: 50%;
   transform: translate(-50%, 10px);
-  width: 300px;
+  width: clamp(240px, calc(300px * var(--l2d-scale)), 420px);
   max-width: calc(100vw - 24px);
   max-height: 60vh;
   display: flex;
   flex-direction: column;
   background: rgba(255, 255, 255, .97);
-  border-radius: 18px;
+  border-radius: clamp(12px, calc(18px * var(--l2d-scale)), 28px);
   box-shadow: 0 12px 44px rgba(40, 50, 90, .28);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -159,7 +161,7 @@
 /* 顶部越界时翻转到模型下方 */
 .l2d-waifu__chat.below {
   bottom: auto;
-  top: calc(100% + 14px);
+  top: calc(100% + var(--l2d-chat-gap));
 }
 
 /* 头部 */
@@ -339,6 +341,74 @@
   box-shadow: none;
   cursor: not-allowed;
   transform: none;
+}
+
+/* ===================== 简要发送小框（沉浸式快速对话） =====================
+ * 需求：菜单新增"简要发送"，只弹一个小输入框让用户给 AI 发消息，
+ * 更有真人对话的沉浸感；用完自动隐藏，不影响大聊天框。 */
+.l2d-waifu__quickbar {
+  position: absolute;
+  bottom: calc(100% + var(--l2d-quickbar-gap));
+  left: 50%;
+  transform: translate(-50%, 10px);
+  width: clamp(220px, calc(260px * var(--l2d-scale)), 380px);
+  max-width: calc(100vw - 24px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, .97);
+  border-radius: clamp(18px, calc(24px * var(--l2d-scale)), 34px);
+  box-shadow: 0 10px 32px rgba(40, 50, 90, .22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(200, 210, 235, .6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 20;
+}
+.l2d-waifu__quickbar.open {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+.l2d-waifu__quickbar-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 14px;
+  font-size: 13.5px;
+  color: #33405c;
+  border: 1.5px solid #e0e4ef;
+  border-radius: 20px;
+  outline: none;
+  background: #fafbff;
+  transition: border-color .2s, box-shadow .2s;
+}
+.l2d-waifu__quickbar-input:focus {
+  border-color: #5b8cff;
+  box-shadow: 0 0 0 3px rgba(91, 140, 255, .15);
+  background: #fff;
+}
+.l2d-waifu__quickbar-input::placeholder {
+  color: #a7b0c4;
+}
+.l2d-waifu__quickbar-send {
+  border: none;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  font-size: 15px;
+  color: #fff;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6ea8ff, #5b8cff);
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 3px 10px rgba(91, 140, 255, .35);
+}
+.l2d-waifu__quickbar-send:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
 }
 
 /* ===================== 隐藏模型后的常驻召唤按钮 ===================== */

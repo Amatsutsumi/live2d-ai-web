@@ -1,0 +1,702 @@
+{
+  "Version": 3,
+  "Type": 0,
+  "Bounds": {
+    "Width": 15.0,
+    "Height": 15.0,
+    "CenterX": -4.5,
+    "CenterY": 7.0
+  },
+  "FileReferences": {
+    "Moc": "Moc_0.moc3",
+    "Textures": [
+      "Textures_0_0.png"
+    ],
+    "Physics": "Physics_0.json",
+    "PhysicsV2": {
+      "File": "Physics_0.json"
+    },
+    "Motions": {
+      "Idle": [
+        {
+          "Name": "idle",
+          "File": "Motions_Idle_0_File_0.json",
+          "WrapMode": 1,
+          "FadeIn": 1500
+        }
+      ],
+      "Idle#1": [
+        {
+          "Name": "effect",
+          "File": "Motions_Idle_effect_0_File_0.json",
+          "WrapMode": 1,
+          "Command": "start_mtn init#2:init"
+        }
+      ],
+      "init#2": [
+        {
+          "Name": "init",
+          "PostCommand": "start_mtn init#2:init_bg;start_mtn init#2:init_blush",
+          "VarFloats": [
+            {
+              "Name": "hide_bg_status",
+              "Type": 2,
+              "Code": "init 0"
+            },
+            {
+              "Name": "blush",
+              "Type": 2,
+              "Code": "init 0"
+            }
+          ]
+        },
+        {
+          "Name": "init_bg",
+          "PostCommand": "parts lock Part57,Part113 0;artmesh_opacities lock Feet_S_R,Feet_S_L,Feet_S_L2 0",
+          "VarFloats": [
+            {
+              "Name": "hide_bg_status",
+              "Type": 1,
+              "Code": "equal 1"
+            }
+          ]
+        },
+        {
+          "Name": "init_blush",
+          "PostCommand": "parameters lock ParamShy 20",
+          "VarFloats": [
+            {
+              "Name": "blush",
+              "Type": 1,
+              "Code": "equal 1"
+            }
+          ]
+        }
+      ],
+      "bg#2": [
+        {
+          "Name": "hide",
+          "PostCommand": "parts lock Part57,Part113 0;artmesh_opacities lock Feet_S_R,Feet_S_L,Feet_S_L2 0",
+          "VarFloats": [
+            {
+              "Name": "hide_bg_status",
+              "Type": 1,
+              "Code": "equal 0"
+            },
+            {
+              "Name": "hide_bg_status",
+              "Type": 2,
+              "Code": "assign 1"
+            }
+          ]
+        },
+        {
+          "Name": "show",
+          "PostCommand": "parts unlock Part57,Part113;parts set Part57,Part113 1;artmesh_opacities unlock Feet_S_R,Feet_S_L,Feet_S_L2;artmesh_opacities set Feet_S_R,Feet_S_L,Feet_S_L2 1",
+          "VarFloats": [
+            {
+              "Name": "hide_bg_status",
+              "Type": 1,
+              "Code": "equal 1"
+            },
+            {
+              "Name": "hide_bg_status",
+              "Type": 2,
+              "Code": "assign 0"
+            }
+          ]
+        }
+      ],
+      "blush#2": [
+        {
+          "Name": "set_1",
+          "PostCommand": "parameters lock ParamShy 20",
+          "VarFloats": [
+            {
+              "Name": "blush",
+              "Type": 1,
+              "Code": "equal 0"
+            },
+            {
+              "Name": "blush",
+              "Type": 2,
+              "Code": "assign 1"
+            }
+          ]
+        },
+        {
+          "Name": "set_0",
+          "PostCommand": "parameters unlock ParamShy",
+          "VarFloats": [
+            {
+              "Name": "blush",
+              "Type": 1,
+              "Code": "equal 1"
+            },
+            {
+              "Name": "blush",
+              "Type": 2,
+              "Code": "assign 0"
+            }
+          ]
+        }
+      ],
+      "menu#2": [
+        {
+          "Name": "menu",
+          "Text": "语音鉴赏",
+          "Choices": [
+            {
+              "Text": "登录",
+              "NextMtn": "select:login"
+            },
+            {
+              "Text": "任务提醒",
+              "NextMtn": "select:mission"
+            },
+            {
+              "Text": "任务完成",
+              "NextMtn": "select:mission_complete"
+            },
+            {
+              "Text": "邮件提醒",
+              "NextMtn": "select:mail"
+            },
+            {
+              "Text": "回港",
+              "NextMtn": "select:home"
+            },
+            {
+              "Text": "誓约",
+              "NextMtn": "select:wedding"
+            },
+            {
+              "Text": "委托完成",
+              "NextMtn": "select:complete"
+            },
+            {
+              "Text": "切换背景",
+              "NextMtn": "bg#2"
+            },
+            {
+              "Text": "切换脸红",
+              "NextMtn": "blush#2"
+            }
+          ],
+          "TextDuration": 5000
+        },
+        {
+          "Name": "menu_en",
+          "Text": "Voice Gallery",
+          "Choices": [
+            {
+              "Text": "Log In",
+              "NextMtn": "select:login_en"
+            },
+            {
+              "Text": "Mission Reminder",
+              "NextMtn": "select:mission_en"
+            },
+            {
+              "Text": "Mission Complete",
+              "NextMtn": "select:mission_complete_en"
+            },
+            {
+              "Text": "Mail Reminder",
+              "NextMtn": "select:mail_en"
+            },
+            {
+              "Text": "Return to Port",
+              "NextMtn": "select:home_en"
+            },
+            {
+              "Text": "Promise",
+              "NextMtn": "select:wedding_en"
+            },
+            {
+              "Text": "Commission Complete",
+              "NextMtn": "select:complete_en"
+            },
+            {
+              "Text": "Toggle Background",
+              "NextMtn": "bg#2"
+            },
+            {
+              "Text": "Toggle Blush",
+              "NextMtn": "blush#2"
+            }
+          ],
+          "TextDuration": 5000,
+          "Language": "en"
+        }
+      ],
+      "Tap": [
+        {
+          "Name": "main_1",
+          "File": "Motions_Tap_0_File_0.json",
+          "Sound": "Motions_Tap_0_Sound_0.wav",
+          "Text": "SG，要时刻掌握指挥官的位置。要是在这副打扮下毫无防备地遇见指挥官的话，我会不知所措的……"
+        },
+        {
+          "Name": "main_2",
+          "File": "Motions_Tap_1_File_0.json",
+          "Sound": "Motions_Tap_1_Sound_0.wav",
+          "Text": "如果指挥官能夸我漂亮而不是可爱，那就……啊，并不是说可爱不好，而是…当，当然，怎么夸都是指挥官的自由，两边都夸也…啊呜…"
+        },
+        {
+          "Name": "main_3",
+          "File": "Motions_Tap_2_File_0.json",
+          "Sound": "Motions_Tap_2_Sound_0.wav",
+          "SoundDelay": 167,
+          "Text": "如果有什么事，请随时告诉我哦。以免让指挥官不安，我……不，我们在此都是为了这个目的呢",
+          "TextDelay": 167
+        },
+        {
+          "Name": "main_1_en",
+          "File": "Motions_Tap_0_File_0.json",
+          "Sound": "Motions_Tap_0_Sound_0.wav",
+          "Text": "SG, track the Commander's exact location. If we meet before I've mentally prepared myself for it, I might just freak out...",
+          "Language": "en"
+        },
+        {
+          "Name": "main_2_en",
+          "File": "Motions_Tap_1_File_0.json",
+          "Sound": "Motions_Tap_1_Sound_0.wav",
+          "Text": "I like \"you're pretty\" over \"you're cute\" as a compliment... Oh, that doesn't mean you can't say I'm cute or anything... It's obviously up to you to decide how to compliment me, Commander, you can even use both, so... *whimper*...",
+          "Language": "en"
+        },
+        {
+          "Name": "main_3_en",
+          "File": "Motions_Tap_2_File_0.json",
+          "Sound": "Motions_Tap_2_Sound_0.wav",
+          "SoundDelay": 167,
+          "Text": "Just tell me if anything feels wrong. It's my... No, it's all our job to ensure you don't have anything to worry about.",
+          "TextDelay": 167,
+          "Language": "en"
+        }
+      ],
+      "body": [
+        {
+          "Name": "touch_body",
+          "File": "Motions_body_0_File_0.json",
+          "Sound": "Motions_body_0_Sound_0.wav",
+          "SoundDelay": 167,
+          "Text": "嗯，海伦娜听着呢。指挥官，怎么了？",
+          "TextDelay": 167
+        },
+        {
+          "Name": "touch_body_en",
+          "File": "Motions_body_0_File_0.json",
+          "Sound": "Motions_body_0_Sound_0.wav",
+          "SoundDelay": 167,
+          "Text": "Mhm, I'm all ears. What is it, Commander?",
+          "TextDelay": 167,
+          "Language": "en"
+        },
+        {
+          "Name": "main",
+          "Command": "start_mtn Tap",
+          "Weight": 3
+        },
+        {
+          "Name": "main_en",
+          "Command": "start_mtn Tap",
+          "Weight": 3,
+          "Language": "en"
+        }
+      ],
+      "head": [
+        {
+          "Name": "touch_head",
+          "File": "Motions_head_0_File_0.json",
+          "Sound": "Motions_head_0_Sound_0.wav"
+        },
+        {
+          "Name": "touch_head_en",
+          "File": "Motions_head_0_File_0.json",
+          "Sound": "Motions_head_0_Sound_0.wav",
+          "Language": "en"
+        }
+      ],
+      "special": [
+        {
+          "Name": "touch_special",
+          "File": "Motions_special_0_File_0.json",
+          "Sound": "Motions_special_0_Sound_0.wav",
+          "SoundDelay": 550,
+          "TextDelay": 550
+        },
+        {
+          "Name": "touch_special_en",
+          "File": "Motions_special_0_File_0.json",
+          "Sound": "Motions_special_0_Sound_0.wav",
+          "Language": "en"
+        }
+      ],
+      "select": [
+        {
+          "Name": "login",
+          "File": "Motions_select_0_File_0.json",
+          "Sound": "Motions_select_0_Sound_0.wav",
+          "Text": "呼…风吹得真舒服。指挥官，一小会儿…就一小会儿，我想在你面前……变得大胆一点……",
+          "FadeIn": 0
+        },
+        {
+          "Name": "mission",
+          "File": "Motions_select_1_File_0.json",
+          "Sound": "Motions_select_1_Sound_0.wav",
+          "SoundDelay": 167,
+          "Text": "指挥官，请先去完成任务吧，我会等你的",
+          "TextDelay": 167
+        },
+        {
+          "Name": "mission_complete",
+          "File": "Motions_select_2_File_0.json",
+          "Sound": "Motions_select_2_Sound_0.wav",
+          "SoundDelay": 350,
+          "Text": "指挥官真厉害呢",
+          "TextDelay": 350
+        },
+        {
+          "Name": "mail",
+          "File": "Motions_select_3_File_0.json",
+          "Sound": "Motions_select_3_Sound_0.wav",
+          "Text": "有新邮件。指挥官，要现在查看吗？"
+        },
+        {
+          "Name": "home",
+          "File": "Motions_select_4_File_0.json",
+          "Sound": "Motions_select_4_Sound_0.wav",
+          "Text": "欢迎回来，指挥官。那个，如果你有空的话，我们要不去游一会儿…啊，刚从海边回来，又邀请你去海边…没关系吗？",
+          "FadeIn": 0
+        },
+        {
+          "Name": "wedding",
+          "File": "Motions_select_5_File_0.json",
+          "Sound": "Motions_select_5_Sound_0.wav",
+          "SoundDelay": 250,
+          "Text": "这就是指挥官给我的承诺吗……这样啊……好开心……",
+          "TextDelay": 250,
+          "FadeIn": 0
+        },
+        {
+          "Name": "complete",
+          "File": "Motions_select_6_File_0.json",
+          "Sound": "Motions_select_6_Sound_0.wav",
+          "Text": "委托组的大家已经回来了。不，不是SG告诉我的，是同伴告诉我的。至于是谁…是秘密哦"
+        },
+        {
+          "Name": "login_en",
+          "File": "Motions_select_0_File_0.json",
+          "Sound": "Motions_select_0_Sound_0.wav",
+          "Text": "Whew... This breeze is lovely... Hey, Commander, for just a brief moment, I was thinking I could... be more daring around you...",
+          "FadeIn": 0,
+          "Language": "en"
+        },
+        {
+          "Name": "mission_en",
+          "File": "Motions_select_1_File_0.json",
+          "Sound": "Motions_select_1_Sound_0.wav",
+          "SoundDelay": 167,
+          "Text": "Commander, please go complete your missions. Don't worry, I'll be here waiting for you.",
+          "TextDelay": 167,
+          "Language": "en"
+        },
+        {
+          "Name": "mission_complete_en",
+          "File": "Motions_select_2_File_0.json",
+          "Sound": "Motions_select_2_Sound_0.wav",
+          "SoundDelay": 350,
+          "Text": "You really are incredible, Commander.",
+          "TextDelay": 350,
+          "Language": "en"
+        },
+        {
+          "Name": "mail_en",
+          "File": "Motions_select_3_File_0.json",
+          "Sound": "Motions_select_3_Sound_0.wav",
+          "Text": "A letter has arrived. Do you want to read it now?",
+          "Language": "en"
+        },
+        {
+          "Name": "home_en",
+          "File": "Motions_select_4_File_0.json",
+          "Sound": "Motions_select_4_Sound_0.wav",
+          "Text": "Welcome back, Commander. If you, uh, have a moment, we could go for a swim... I know you just got back from the ocean, but... still?",
+          "FadeIn": 0,
+          "Language": "en"
+        },
+        {
+          "Name": "wedding_en",
+          "File": "Motions_select_5_File_0.json",
+          "Sound": "Motions_select_5_Sound_0.wav",
+          "SoundDelay": 250,
+          "Text": "A promise... from you, Commander? I see... I'm so happy...",
+          "TextDelay": 250,
+          "FadeIn": 0,
+          "Language": "en"
+        },
+        {
+          "Name": "complete_en",
+          "File": "Motions_select_6_File_0.json",
+          "Sound": "Motions_select_6_Sound_0.wav",
+          "Text": "The commission team is back. No, it wasn't my SG that told me, but a friend. As for who... that's a secret.",
+          "Language": "en"
+        }
+      ],
+      "touch_drag": [
+        {
+          "Name": "touch_drag1",
+          "File": "Motions_touch_drag_0_File_0.json"
+        },
+        {
+          "Name": "touch_drag3",
+          "File": "Motions_touch_drag_1_File_0.json"
+        }
+      ]
+    }
+  },
+  "Controllers": {
+    "ParamHit": {
+      "Items": [
+        {
+          "Name": "touch_drag1",
+          "Id": "touch_drag1",
+          "HitArea": "TouchDrag1",
+          "Axis": 1,
+          "MinValue": 0.0,
+          "MaxValue": 30.0,
+          "Factor": 0.12,
+          "Release": 90,
+          "ReleaseType": 0,
+          "MaxMtn": "touch_drag:touch_drag1"
+        },
+        {
+          "Name": "touch_drag2",
+          "Id": "touch_drag2",
+          "HitArea": "TouchDrag2",
+          "Axis": 0,
+          "MinValue": 0.0,
+          "MaxValue": 30.0,
+          "Factor": 0.12,
+          "Release": 90,
+          "ReleaseType": 0
+        },
+        {
+          "Name": "touch_drag3",
+          "Id": "touch_drag3",
+          "HitArea": "TouchDrag3",
+          "Axis": 1,
+          "MinValue": -30.0,
+          "MaxValue": 10.0,
+          "Factor": 0.2,
+          "Release": 90,
+          "ReleaseType": 0,
+          "MinMtn": "touch_drag:touch_drag3"
+        },
+        {
+          "Name": "ParamBodyAngleZ",
+          "Id": "ParamBodyAngleZ",
+          "HitArea": "Mizugi_A",
+          "Axis": 0,
+          "MinValue": -10.0,
+          "MaxValue": 20.0,
+          "Factor": 0.05,
+          "Release": 1000,
+          "ReleaseType": 1
+        },
+        {
+          "Name": "ParamBodyAngleZ2",
+          "Id": "ParamBodyAngleZ",
+          "HitArea": "TouchSpecial",
+          "Axis": 0,
+          "MinValue": -10.0,
+          "MaxValue": 20.0,
+          "Factor": 0.05,
+          "Release": 1000,
+          "ReleaseType": 1
+        }
+      ],
+      "Enabled": true
+    },
+    "ParamLoop": {
+      "Items": [
+        {
+          "Name": "Hair_physics",
+          "Ids": [
+            "Hair_physics"
+          ],
+          "Type": 1,
+          "Duration": 3000,
+          "MinValue": 0.0,
+          "MaxValue": 1.0
+        }
+      ],
+      "Enabled": true
+    },
+    "KeyTrigger": {},
+    "ParamTrigger": {},
+    "AreaTrigger": {},
+    "HandTrigger": {},
+    "EyeBlink": {
+      "MinInterval": 500,
+      "MaxInterval": 6000,
+      "Items": [
+        {
+          "Id": "ParamEyeLOpen",
+          "Min": 0.0,
+          "Max": 1.0,
+          "BlendMode": 2,
+          "Input": 0
+        },
+        {
+          "Id": "ParamEyeROpen",
+          "Min": 0.0,
+          "Max": 1.0,
+          "BlendMode": 2,
+          "Input": 0
+        }
+      ]
+    },
+    "LipSync": {
+      "Gain": 0.0,
+      "Items": [
+        {
+          "Id": "ParamMouthOpenY",
+          "Min": 0.0,
+          "Max": 1.0,
+          "Input": 0
+        }
+      ]
+    },
+    "MouseTracking": {
+      "SmoothTime": 0.299095839,
+      "Items": [
+        {
+          "Id": "ParamAngleX",
+          "Min": -15.0,
+          "Max": 15.0,
+          "BlendMode": 1,
+          "Input": 0
+        },
+        {
+          "Id": "ParamAngleY",
+          "Min": -15.0,
+          "Max": 15.0,
+          "BlendMode": 1,
+          "Axis": 1,
+          "Input": 0
+        },
+        {
+          "Id": "ParamBodyAngleX",
+          "Min": -8.0,
+          "Max": 8.0,
+          "BlendMode": 1,
+          "Input": 0
+        },
+        {
+          "Id": "ParamBodyAngleY",
+          "Min": -8.0,
+          "Max": 8.0,
+          "BlendMode": 1,
+          "Axis": 1,
+          "Input": 0
+        },
+        {
+          "Id": "ParamEyeBallX",
+          "Min": -0.4,
+          "Max": 0.2,
+          "BlendMode": 1,
+          "Input": 0
+        },
+        {
+          "Id": "ParamEyeBallY",
+          "Min": -0.4,
+          "Max": 0.4,
+          "BlendMode": 1,
+          "Axis": 1,
+          "Input": 0
+        }
+      ],
+      "Enabled": true
+    },
+    "AutoBreath": {},
+    "ExtraMotion": {},
+    "Accelerometer": {},
+    "Microphone": {},
+    "Transform": {},
+    "FaceTracking": {},
+    "HandTracking": {},
+    "ParamValue": {
+      "Items": [
+        {
+          "Name": "ring",
+          "Ids": [
+            "Paramring"
+          ],
+          "Value": 1.0,
+          "Hidden": true
+        }
+      ],
+      "Enabled": true
+    },
+    "PartOpacity": {},
+    "ArtmeshOpacity": {},
+    "ArtmeshColor": {},
+    "ArtmeshCulling": {
+      "DefaultMode": 0
+    },
+    "IntimacySystem": {}
+  },
+  "HitAreas": [
+    {
+      "Name": "Hana_2",
+      "Id": "Hana_2",
+      "Motion": "menu#2"
+    },
+    {
+      "Name": "TouchSpecial",
+      "Id": "TouchSpecial",
+      "Motion": "special"
+    },
+    {
+      "Name": "TouchHead",
+      "Id": "TouchHead",
+      "Motion": "head"
+    },
+    {
+      "Name": "TouchBody",
+      "Id": "TouchBody",
+      "Motion": "body"
+    },
+    {
+      "Name": "TouchDrag1",
+      "Id": "TouchDrag1"
+    },
+    {
+      "Name": "TouchDrag2",
+      "Id": "TouchDrag2"
+    },
+    {
+      "Name": "TouchDrag3",
+      "Id": "TouchDrag3"
+    },
+    {
+      "Name": "Mizugi_A",
+      "Id": "Mizugi_A"
+    },
+    {
+      "Name": "Background",
+      "Id": "Background",
+      "Motion": "Tap"
+    }
+  ],
+  "Options": {
+    "Name": "hailunna_4",
+    "ScaleFactor": 0.16,
+    "PositionX": 4.6,
+    "PositionY": -3.0,
+    "TexFixed": true,
+    "TexType": 0
+  }
+}

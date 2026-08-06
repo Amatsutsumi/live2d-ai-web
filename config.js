@@ -11,6 +11,13 @@
  *    4. 插件主文件   <script src="l2d-waifu.js"></script>
  * ========================================================================== */
 window.L2D_WAIFU_CONFIG = {
+  /* ------------------------- 全局开关 ------------------------- */
+  // 是否在手机端开启看板娘。
+  // true  - 手机端正常显示（默认）
+  // false - 手机端（移动端 UA 或触屏小屏）不加载看板娘，仅 PC 端显示。
+  //         适用于不想在手机上展示的网站。
+  enableOnMobile: true,
+
   /* ----------------------------- 模型配置 ----------------------------- */
   model: {
     // 本地加载（推荐，资源随插件一起部署）
@@ -18,8 +25,10 @@ window.L2D_WAIFU_CONFIG = {
     // 远程加载（CDN / 任意 http(s) 地址均可，示例模型）
     // path: 'https://fastly.jsdelivr.net/gh/Amatsutsumi/live2d-model@1.1/hailunna/model0.json',
 
-    scale: 0.6,          // 模型缩放比例，1 为原始大小，常用 0.5 ~ 2.5
-    position: [0, -0.32], // 模型在画布中的偏移 [x, y]，x 正值右移，y 正值上移
+    scale: 1.0,          // 模型缩放比例，1 为原始大小，常用 0.5 ~ 2.5。
+                          // 菜单/统一气泡/简要发送框/聊天框/状态标签与模型的间距会自动跟随该值联动缩放，
+                          // 模型大则距离远、模型小则距离近，不会卡进模型或离得太远。
+    position: [0, -0.15], // 模型在画布中的偏移 [x, y]，x 正值右移，y 正值上移
     volume: 0.9,          // 模型自带语音音量 0 ~ 1（部分模型动作自带 Sound）
     logLevel: 'warn'      // 日志级别：error | warn | info | trace
   },
@@ -35,13 +44,13 @@ window.L2D_WAIFU_CONFIG = {
   },
 
   /* --------------------------- 交互配置 --------------------------- */
-  draggable: false,       // 看板娘是否可拖拽
+  draggable: true,       // 看板娘是否可拖拽
   clickRandomAction: true,  // 点击画布空白处触发随机动作（模仿 Live2D Viewer EX）
 
   /* ----------------------------- 文字大模型 ----------------------------- */
   chat: {
-    api: 'https://api.yinghu.xyz/api/chat',   // 文字大模型接口（智谱/OpenAI 兼容格式）
-    model: 'glm-4.7-flash',                       // 模型名称（智谱清言）
+    api: 'https://api.yinghu.asia/api/chat',   // 文字大模型接口（智谱/OpenAI 兼容格式）
+    model: 'glm-4-flash',                       // 模型名称（智谱清言）
     temperature: 0.7,
     timeout: 60000,                             // 请求超时（ms）
     historySize: 8,                             // 携带的上下文轮数
@@ -63,7 +72,7 @@ window.L2D_WAIFU_CONFIG = {
   /* ----------------------------- 语音大模型 ----------------------------- */
   tts: {
     enabled: true,                              // 是否开启 TTS 语音
-    api: 'https://api.yinghu.xyz/api/tts',     // 语音大模型接口（GET，?text=xxx 返回音频）
+    api: 'https://api.yinghu.asia/api/tts',     // 语音大模型接口（GET，?text=xxx 返回音频）
     voice: '',                                  // 可选：音色参数（如 "alloy"），留空不传
     extraParams: {}                             // 可选：额外查询参数 { "speed": "1.0" }
   },
@@ -81,7 +90,7 @@ window.L2D_WAIFU_CONFIG = {
     // 思考中的动作（等待大模型/TTS 返回期间播放）
     thinking: {
       motion: 'Idle',        // 动作组名；设为 null 自动挑选
-      tip: '让我想想… 🤔'      // 头顶气泡文案
+      tip: '让我想想… 🤔'      // 思考中提示（显示在统一气泡）
     },
 
     // 各情绪对应的动作组。motion 为 null 时插件会智能匹配；
@@ -135,7 +144,8 @@ window.L2D_WAIFU_CONFIG = {
     avatar: '🐰',              // 聊天头像
     chatWidth: 300,           // 聊天框宽度（px）
     chatOpen: false,          // 打开页面时是否展开聊天框（默认隐藏，点击左侧💬召唤）
-    showMenu: true,           // 是否显示模型左侧的小菜单（聊天/语音/表情/动作/待机/隐藏）
+    showMenu: true,           // 是否显示模型左侧的小菜单（聊天/简要发送/语音/表情/动作/待机/隐藏）
+    showQuickSend: true,      // 是否启用「📝 简要发送」沉浸式小框（false 时左侧菜单不显示该按钮）
     statusText: {             // 状态文案
       idle: '待机中',
       thinking: '思考中…',

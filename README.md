@@ -322,11 +322,10 @@ A：插件已处理：模型动作自带语音期间，聊天框自动锁定并�
 live2d-plugin/
 ├── config.js            # 配置文件（模型/接口/尺寸/位置/情绪/互动等）
 ├── l2d-waifu.js         # 插件主逻辑（无构建，纯浏览器 JS）
-├── l2d-waifu.css        # 样式（看板娘 + 美化聊天框）
-├── demo/
-│   └── index.html       # 在线演示页
+├── l2d-waifu.css        # 样式（看板娘 + 美化聊天框）      
 └── assets/models/
     └── hailunna/        # 内置示例模型（海伦娜 Live2D）
+    └── yuezhan/         ← 内置示例模型（狂三，可本地加载）
 ```
 
 ---

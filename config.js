@@ -49,7 +49,7 @@ window.L2D_WAIFU_CONFIG = {
 
   /* ----------------------------- 文字大模型 ----------------------------- */
   chat: {
-    api: 'https://api.yinghu.asia/api/chat',   // 文字大模型接口（智谱/OpenAI 兼容格式）
+    api: 'https://自定义域名/api/chat',   // 文字大模型接口（智谱/OpenAI 兼容格式）
     model: 'glm-4-flash',                       // 模型名称（智谱清言）
     temperature: 0.7,
     timeout: 60000,                             // 请求超时（ms）
@@ -72,7 +72,7 @@ window.L2D_WAIFU_CONFIG = {
   /* ----------------------------- 语音大模型 ----------------------------- */
   tts: {
     enabled: true,                              // 是否开启 TTS 语音
-    api: 'https://api.yinghu.asia/api/tts',     // 语音大模型接口（GET，?text=xxx 返回音频）
+    api: 'https://自定义域名/api/tts',     // 语音大模型接口（GET，?text=xxx 返回音频）
     voice: '',                                  // 可选：音色参数（如 "alloy"），留空不传
     extraParams: {}                             // 可选：额外查询参数 { "speed": "1.0" }
   },

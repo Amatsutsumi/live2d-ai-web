@@ -6,6 +6,21 @@
 
 ---
 
+## 📌 先看这里：两种使用方式，选一种
+
+在使用前，请先决定你采用哪种方式，后续步骤完全不同：
+
+| | **方式 A：纯前端（简单直接）** | **方式 B：配合后端 live2d-ai-web-RD（推荐）** |
+| --- | --- | --- |
+| 适合人群 | 想自己搭建后端、或者不想用AI功能，只想快速看到效果 | 想要网页管理后台、可视化配置、一键切换模型 |
+| 要改配置吗 | ✅ 需要手动改 `config.js` | ❌ **完全不用改配置文件**，后端自动生成 |
+| 功能 | 模型互动功能，其余功能需要自己搭建后端 | 全部功能 + 网页后台 + 多模型绑定 + 一键切换 |
+| 上手路径 | 跳到 [快速开始（纯前端）](#快速开始纯前端) | 跳到 [方式 B：配合后端 live2d-ai-web-RD](#方式b配合后端) |
+
+> 💡 简单说：**方式 A** 是手动改配置文件接入各种大模型 API；**方式 B** 是部署后端，在网页后台填 API Key，前端一行配置都不用改。两个方式的前端插件完全一样。
+
+---
+
 ## ✨ 功能特性
 
 | 功能 | 说明 |
@@ -20,18 +35,26 @@
 | 🖱 可互动系统 | 点击头部/身体触发互动动作（含模型自带语音），模仿 Live2D Viewer EX |
 | 🧲 拖拽 | 看板娘可随意拖拽到屏幕任意位置 |
 | 🎛 配置化 | 单文件 `config.js` 自定义模型、接口、尺寸、位置、情绪动作映射等 |
-| 🔀 一键切换模型 | 侧边菜单新增 🔀 按钮，切换 Live2D 模型的同时自动级联切换 TTS/文字模型/音色/人设/知识库（配合 `live2d-ai-backend` 使用） |
+| 🔀 一键切换模型 | 侧边菜单新增 🔀 按钮，切换 Live2D 模型的同时自动级联切换 TTS/文字模型/音色/人设/知识库（配合后端 `live2d-ai-web-RD` 使用） |
 | 📦 本地/远程模型 | 模型文件可随插件本地部署，也可直接引用 CDN 链接 |
 | 🛡 语音防冲突 | 模型自带语音播放期间自动锁定聊天框，待机后恢复，避免与 TTS 混淆 |
 | 🌐 任意网站 | 只需 3 行标签引入，即可在任意 HTML 页面 / Hexo 博客 / Vue / React 页面使用 |
 
 ---
 
-## 🚀 快速开始
+## <a id="快速开始纯前端"></a>🚀 快速开始（纯前端）
+
+> 采用 **方式 A**：自己搭接口、手动改 `config.js`。如果你用的是 **方式 B（后端）**，请直接跳到 [方式 B](#方式b配合后端)，无需改任何配置。
 
 ### 1. 部署文件
 
-把 `live2d-plugin/` 整个文件夹拷贝到你的网站目录（Hexo 主题目录 / 任意静态目录均可）：
+运行
+
+```
+git clone https://github.com/Amatsutsumi/live2d-ai-web.git live2d-plugin
+```
+
+把 `live2d-plugin/` 整个文件夹拷贝到你的网站目录（比如Hexo的source目录 / 任意静态目录均可）：
 
 ```
 live2d-plugin/
@@ -59,9 +82,13 @@ live2d-plugin/
 <script src="l2d-waifu.js"></script>
 ```
 
-无需任何其他代码，页面右下角就会出现看板娘 🎀（聊天框默认隐藏，点击模型左侧 💬 召唤）
+无需任何其他代码，页面右下角就会出现看板娘 🎀（聊天框默认隐藏，点击模型左侧 💬 召唤）。
 
-### 3. 打开演示页
+### 3. 配置你的大模型接口
+
+打开 `config.js`，把 `chat.api`、`tts.api` 换成你自己的接口地址并填好 `chat.headers`（如 `Authorization: Bearer xxx`），详见 [配置说明](#配置说明)。改完刷新页面即可生效。
+
+### 4. 打开演示页
 
 浏览器打开 `live2d-plugin/demo/index.html`，即可体验全部功能：
 - 聊天框**默认隐藏**，点击模型左侧 💬 召唤完整聊天框（悬浮在模型头顶，不遮挡模型）
@@ -75,7 +102,77 @@ live2d-plugin/
 
 ---
 
-## 🎨 配置说明
+## <a id="方式b配合后端"></a>🔌 方式 B：配合后端 live2d-ai-web-RD（推荐）
+
+> 后端仓库（务必认准）：**https://github.com/Amatsutsumi/live2d-ai-web-RD**
+>
+> 采用后端方案后：**前端插件一行配置都不用改**，后端会动态生成 `window.L2D_WAIFU_CONFIG` 自动注入，你还能获得 **网页管理后台**（配置文字/语音大模型、人设、知识库）+ **🔀 一键切换模型** 能力。
+
+### 为什么推荐方式 B？
+
+- **零配置**：无需手动改 `config.js`，后端自动生成配置，Chat / TTS 接口自动指向后端
+- **密钥安全**：API Key 只保存在后端服务器，**绝不暴露给前端浏览器**
+- **可视化后台**：网页上点几下就能配置大模型、人设、知识库，无需写代码
+- **一键切换模型**：切换 Live2D 模型时自动级联切换 TTS / 文字模型 / 音色 / 人设 / 知识库
+
+### 对接原理
+
+- 后端启动后提供一个 `/watcher/config.js` 动态配置接口，内容就是本插件读取的 `window.L2D_WAIFU_CONFIG`，其中：
+  - `chat.api` / `tts.api` 自动指向后端代理（`/api/chat`、`/api/tts`），**API Key 绝不暴露给前端**；
+  - 额外注入 `chatProviders` / `ttsProviders`（可切换提供方列表）、`bindings` / `modelList`（模型绑定列表）、`__backend` 标记。
+- 插件的 🔀 **切换模型**按钮会读取 `bindings` / `modelList`，切换模型时自动：
+  1. 重新加载新的 Live2D 模型；
+  2. 把后续 Chat / TTS 请求带上 `bindingId`，由后端**级联切换**该模型绑定的文字大模型、TTS 服务、音色、人设与知识库；
+  3. 同步更新看板娘名字/头像（绑定的人设）。
+
+### 步骤一：部署并配置后端
+
+按 [live2d-ai-web-RD README](https://github.com/Amatsutsumi/live2d-ai-web-RD) 部署（本地 `npm start` 或 Docker，详见后端仓库教程），然后在**管理后台**（默认 `http://localhost:3000/admin.html`，账号 `admin / 123456`）：
+
+1. 配置**文字大模型**（支持 DeepSeek / OpenAI / 智谱 GLM / 通义千问 / SiliconFlow / Kimi / Ollama 等）；
+2. 配置**语音大模型**（OpenAI 兼容 / 枫雨API 这类 GET 接口均可）；
+3. 设置 **AI 人设** 与 **知识库**（可选）；
+4. 在 **🎭 模型绑定** 里为每个 Live2D 模型添加绑定，绑定各自的文字模型、TTS 音色、人设与知识库；
+   - 绑定里勾选「为此模型自定义情绪映射」可为该模型**单独配置 6 种情绪的「动作组 + 气泡文案」**（`emotionMap`），不同模型的动作组命名可以不同（如 `happy` 可映射到该模型的真实动作组「高兴」）；不勾选则使用全局情绪表。
+5. 点「💾 保存配置」，后端即自动生成 `/watcher/config.js`。
+
+### 步骤二：在你的页面引入（无需本插件的 config.js）
+
+后端已经内置 **CORS 中间件**，任何网站都可以直接跨域引用：
+
+```html
+<!-- 1. l2d 官方库 -->
+<script src="https://unpkg.com/l2d/dist/index.min.js"></script>
+
+<!-- 2. 动态配置（由 live2d-ai-web-RD 后端生成，代替本插件的 config.js） -->
+<script src="http://你的后端域名/watcher/config.js"></script>
+
+<!-- 3. 插件主文件（本仓库 live2d-plugin/l2d-waifu.js，或后端 /watcher/l2d-waifu.js 同一份） -->
+<script src="/live2d-plugin/l2d-waifu.js"></script>
+<link rel="stylesheet" href="/live2d-plugin/l2d-waifu.css" />
+```
+
+> ✅ 说明：后端 `/watcher/l2d-waifu.js` 与 `l2d-waifu.css` 就是本插件同源版本（含 🔀 切换模型逻辑）。你可以二选一：
+> - **用本仓库的** `live2d-plugin/l2d-waifu.js` + 后端 `/watcher/config.js`（推荐，方便随本仓库更新）；
+> - 或全部用后端的 `/watcher/` 静态文件。
+
+### 步骤三：使用 🔀 切换模型
+
+刷新页面后，看板娘左侧小菜单会多出一个 **🔀** 按钮：
+
+- 点击弹出「🎭 切换模型」面板，列出你在后台配置的全部模型绑定；
+- 选择一个模型即**热切换**：重新加载 Live2D 模型 + 级联切换 TTS/文字模型/音色/人设/知识库 + **该模型绑定的情绪映射表 `emotionMap`**，并清空对话历史；
+- 切到某个绑定后，情绪动作**优先使用该模型的 `emotionMap`**（动作组 + 气泡文案），未配置的情绪自动回退全局 `watcher.emotion.map`；
+- 对话与语音请求会自动携带 `bindingId`，由后端完成级联路由。
+
+### 不使用后端时的兼容行为
+
+- 若配置中没有 `bindings` / `modelList`（纯前端 `config.js` 使用），🔀 按钮点击会提示「后台未配置可切换的模型绑定」，不影响其它功能；
+- Chat / TTS 仍走 `config.js` 里配置的 `chat.api` / `tts.api`，行为与旧版完全一致。
+
+---
+
+## <a id="配置说明"></a>🎨 配置说明
 
 所有配置都在 `config.js` 的 `window.L2D_WAIFU_CONFIG` 对象中，修改后刷新页面即生效。
 
@@ -216,39 +313,73 @@ ui: {
 
 ## 📦 Hexo 集成指南
 
-### 方式一：主题内引入（推荐）
+> 推荐把 `live2d-plugin/` 文件夹放到 Hexo 站点的 **`source/` 目录**下（构建后 URL 为 `/live2d-plugin/...`），再按下方主题说明引入。注意：若文件夹放在 `source/` 下，需要在站点 `_config.yml` 中配置 `skip_render` 跳过对 `live2d-plugin` 的渲染（见下），否则 Hexo 会尝试把 JS/CSS 当模板处理。
 
-1. 将 `live2d-plugin/` 文件夹拷贝到你的 Hexo 主题目录，例如：
+### 通用步骤（所有主题适用）
+
+1. 把 `live2d-plugin/` 整个文件夹拷贝到 Hexo 站点根目录的 `source/` 下：
 
    ```
-   themes/<你的主题>/source/live2d-plugin/
+   <你的Hexo站点>/source/live2d-plugin/
    ```
 
-2. 在主题的 `layout/_partial/footer.ejs`（或 `layout.ejs`）中，`</body>` 前加入：
+2. 在站点 `_config.yml` 中添加（避免 Hexo 渲染插件文件）：
+
+   ```yaml
+   skip_render:
+     - 'live2d-plugin/**'
+   ```
+
+3. 按你使用的主题，把下面 4 行引入到页面的 `</body>` 前（方式 B 用户把第 3 行的 `config.js` 换成后端地址 `http://你的后端域名/watcher/config.js` 即可）：
 
    ```html
-   <link rel="stylesheet" href="<%- url_for('live2d-plugin/l2d-waifu.css') %>">
+   <link rel="stylesheet" href="/live2d-plugin/l2d-waifu.css">
    <script src="https://unpkg.com/l2d/dist/index.min.js"></script>
-   <script src="<%- url_for('live2d-plugin/config.js') %>"></script>
-   <script src="<%- url_for('live2d-plugin/l2d-waifu.js') %>"></script>
+   <script src="/live2d-plugin/config.js"></script> ## 方式B用户把这一行换成后端地址 `http://你的后端域名/watcher/config.js` 即可
+   <script src="/live2d-plugin/l2d-waifu.js"></script>
    ```
 
-3. `hexo clean && hexo g && hexo s` 即可预览。
+4. `hexo clean && hexo g && hexo s` 即可预览。
 
-### 方式二：文章页使用（单个页面）
+### 方式一：Butterfly 主题
 
-在需要展示看板娘的文章 Front Matter 中加入 `live2d: true`，然后在文章模板中按需引入，或直接使用下面的自定义布局。
-
-### 方式三：通用代码块
-
-如果主题不方便改，也可以使用 Hexo 的「自定义 HTML」方式，在 `_config.yml` 里配置 `skip_render` 跳过 `live2d-plugin` 目录的渲染：
+Butterfly 主题自带 **inject（注入）** 配置，不用改主题源码。编辑主题配置文件 `_config.butterfly.yml`：
 
 ```yaml
-skip_render:
-  - 'live2d-plugin/**'
+inject:
+  head:
+    - <link rel="stylesheet" href="/live2d-plugin/l2d-waifu.css">
+  bottom:
+    - <script src="https://unpkg.com/l2d/dist/index.min.js"></script>
+    - <script src="/live2d-plugin/config.js"></script> ## 方式B用户把这一行换成后端地址 `http://你的后端域名/watcher/config.js` 即可
+    - <script src="/live2d-plugin/l2d-waifu.js"></script>
 ```
 
-然后在主题 footer 里加入上面的 3 个标签即可。
+> 方式 B（后端）用户只需把 `bottom` 里的 `config.js` 换成 `https://你的后端域名/watcher/config.js`，其余不变。
+
+### 方式二：Solitude 主题
+
+Solitude 主题同样支持 **inject 注入**（在主题配置中提供 head / body 注入）。在 Solitude 主题配置（`_config.solitude.yml`）中加入：
+
+```yaml
+inject:
+  head:
+    - <link rel="stylesheet" href="/live2d-plugin/l2d-waifu.css">
+  bottom:
+    - <script src="https://unpkg.com/l2d/dist/index.min.js"></script>
+    - <script src="/live2d-plugin/config.js"></script>  ## 方式B用户把这一行换成后端地址 `http://你的后端域名/watcher/config.js` 即可
+    - <script src="/live2d-plugin/l2d-waifu.js"></script>
+```
+
+> 具体配置项名以你所用的 Solitude 版本为准；若你的主题版本没有 `inject` 配置，也可用下面的「方式三：通用代码块」在主题布局文件中手动引入。
+
+### 方式三：通用代码块（主题不支持 inject 时）
+
+如果主题不支持 `inject` 配置，可以直接修改主题的布局文件（如 `layout/_partial/footer.ejs`、`layout.ejs` 或对应主题的 footer 模板），在 `</body>` 前加入上面的 4 行标签。
+
+### 其他主题 / 自定义布局
+
+如果只想在**单个文章页**展示看板娘，可在文章 Front Matter 中加入 `live2d: true`，然后在文章模板中按需引入；或在主题模板中加判断条件按页面开关引入。
 
 ---
 
@@ -260,72 +391,11 @@ skip_render:
 <!-- 页面任意位置（建议 body 末尾） -->
 <link rel="stylesheet" href="/live2d-plugin/l2d-waifu.css">
 <script src="https://unpkg.com/l2d/dist/index.min.js"></script>
-<script src="/live2d-plugin/config.js"></script>
+<script src="/live2d-plugin/config.js"></script>  ## 方式B用户把这一行换成后端地址 `http://你的后端域名/watcher/config.js` 即可
 <script src="/live2d-plugin/l2d-waifu.js"></script>
 ```
 
 如果项目使用 Vue / React 等框架，只需把这三行放到 `index.html` 的 `<body>` 中即可（插件使用 `position:fixed` 全屏定位，不依赖框架）。
-
----
-
-## 🔌 与 live2d-ai-backend 完美对接（推荐）
-
-> 🎯 本插件与 [live2d-ai-backend](https://cnb.cool/live2d-AI/live2d-AImodel-RD/-/tree/main/live2d-ai-backend) **可以完美对接**：后端动态生成 `window.L2D_WAIFU_CONFIG`，插件无需改任何代码即可直接使用，还能获得**网页管理后台**（配置文字/语音大模型、人设、知识库）+ **🔀 一键切换模型**能力。
-
-### 对接原理
-
-- 后端启动后提供一个 `/watcher/config.js` 动态配置接口，内容就是本插件读取的 `window.L2D_WAIFU_CONFIG`，其中：
-  - `chat.api` / `tts.api` 自动指向后端代理（`/api/chat`、`/api/tts`），**API Key 绝不暴露给前端**；
-  - 额外注入 `chatProviders` / `ttsProviders`（可切换提供方列表）、`bindings` / `modelList`（模型绑定列表）、`__backend` 标记。
-- 插件的 🔀 **切换模型**按钮会读取 `bindings` / `modelList`，切换模型时自动：
-  1. 重新加载新的 Live2D 模型；
-  2. 把后续 Chat / TTS 请求带上 `bindingId`，由后端**级联切换**该模型绑定的文字大模型、TTS 服务、音色、人设与知识库；
-  3. 同步更新看板娘名字/头像（绑定的人设）。
-
-### 步骤一：部署并配置后端
-
-按 [live2d-ai-backend README](https://cnb.cool/live2d-AI/live2d-AImodel-RD/-/tree/main/live2d-ai-backend) 部署（本地 `npm start` 或 Docker），然后在**管理后台**（默认 `http://localhost:3000/admin.html`，账号 `admin / 123456`）：
-
-1. 配置**文字大模型**（支持 DeepSeek / OpenAI / 智谱 GLM / 通义千问 / SiliconFlow / Kimi / Ollama 等）；
-2. 配置**语音大模型**（OpenAI 兼容 / 枫雨API 这类 GET 接口均可）；
-3. 设置 **AI 人设** 与 **知识库**（可选）；
-4. 在 **🎭 模型绑定** 里为每个 Live2D 模型添加绑定，绑定各自的文字模型、TTS 音色、人设与知识库；
-   - 绑定里勾选「为此模型自定义情绪映射」可为该模型**单独配置 6 种情绪的「动作组 + 气泡文案」**（`emotionMap`），不同模型的动作组命名可以不同（如 `happy` 可映射到该模型的真实动作组「高兴」）；不勾选则使用全局情绪表。
-5. 点「💾 保存配置」，后端即自动生成 `/watcher/config.js`。
-
-### 步骤二：在你的页面引入（无需本插件的 config.js）
-
-后端已经内置 **CORS 中间件**，任何网站都可以直接跨域引用：
-
-```html
-<!-- 1. l2d 官方库 -->
-<script src="https://unpkg.com/l2d/dist/index.min.js"></script>
-
-<!-- 2. 动态配置（由 live2d-ai-backend 生成，代替本插件的 config.js） -->
-<script src="http://你的后端域名/watcher/config.js"></script>
-
-<!-- 3. 插件主文件（本仓库 live2d-plugin/l2d-waifu.js，或后端 /watcher/l2d-waifu.js 同一份） -->
-<script src="/live2d-plugin/l2d-waifu.js"></script>
-<link rel="stylesheet" href="/live2d-plugin/l2d-waifu.css" />
-```
-
-> ✅ 说明：后端 `/watcher/l2d-waifu.js` 与 `l2d-waifu.css` 就是本插件同源版本（含 🔀 切换模型逻辑）。你可以二选一：
-> - **用本仓库的** `live2d-plugin/l2d-waifu.js` + 后端 `/watcher/config.js`（推荐，方便随本仓库更新）；
-> - 或全部用后端的 `/watcher/` 静态文件。
-
-### 步骤三：使用 🔀 切换模型
-
-刷新页面后，看板娘左侧小菜单会多出一个 **🔀** 按钮：
-
-- 点击弹出「🎭 切换模型」面板，列出你在后台配置的全部模型绑定；
-- 选择一个模型即**热切换**：重新加载 Live2D 模型 + 级联切换 TTS/文字模型/音色/人设/知识库 + **该模型绑定的情绪映射表 `emotionMap`**，并清空对话历史；
-- 切到某个绑定后，情绪动作**优先使用该模型的 `emotionMap`**（动作组 + 气泡文案），未配置的情绪自动回退全局 `watcher.emotion.map`；
-- 对话与语音请求会自动携带 `bindingId`，由后端完成级联路由。
-
-### 不使用后端时的兼容行为
-
-- 若配置中没有 `bindings` / `modelList`（纯前端 `config.js` 使用），🔀 按钮点击会提示「后台未配置可切换的模型绑定」，不影响其它功能；
-- Chat / TTS 仍走 `config.js` 里配置的 `chat.api` / `tts.api`，行为与旧版完全一致。
 
 ---
 
@@ -362,25 +432,47 @@ window.L2DWaifu.hide() / show();       // 隐藏/显示看板娘
 
 ---
 
-## 🧠 工作原理
+## 🧠 技术原理
+
+### 整体架构
 
 ```
-用户输入 ──▶ 文字大模型(chat) ──▶ 情绪标签解析
-                                        │
-                                        ▼
-                             语音大模型(TTS) 生成语音（思考中动作）
-                                        │
-                              ┌─────────┴─────────┐
-                              ▼                   ▼
-                       文字打字机输出        播放语音 + 口型同步
-                    （与语音同时开始，同屏输出）
+┌──────────────────────────── 前端（浏览器） ────────────────────────────┐
+│                                                                        │
+│  用户输入 ──▶ 文字大模型(chat) ──▶ 情绪标签解析                          │
+│                                          │                             │
+│                                          ▼                             │
+│                               语音大模型(TTS) 生成语音（思考中动作）       │
+│                                          │                             │
+│                           ┌──────────────┴──────────────┐              │
+│                           ▼                             ▼              │
+│                    文字打字机输出                 播放语音 + 口型同步       │
+│                  （与语音同时开始，同屏输出）                             │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
-- **语音与文字同步输出**：先完成 Chat 与 TTS 两段请求，**语音生成完毕后**才同时开始文字打字机输出与语音播放，避免“文字先出、语音后到”
-- **情绪动作**：大模型在回复首行返回 `#EMOTION#happy` 等标签 → 插件映射到模型动作组 + 统一气泡
-- **思考中**：请求 Chat / TTS 期间播放 `thinking.motion` 配置的动作
-- **口型同步**：`<audio>` 通过 `createMediaElementSource` 接入 Web Audio `AnalyserNode`，每帧读取音量驱动嘴部参数（`ParamMouthOpenY` / `PARAM_MOUTH_OPEN_Y` 等自动检测）
-- **语音防冲突**：模型动作自带语音时（如点击身体），`motionstart` → 锁定聊天框；`motionend` 回到待机 → 解锁。同时 TTS 播放期间会暂时把模型音量设为 0，结束后恢复
+### 渲染层：基于 l2d 引擎
+
+- 插件基于 [l2d](https://github.com/hacxy/l2d) 渲染引擎加载 Live2D 模型，自动识别 `.model.json`（Cubism 2）与 `.model3.json`（Cubism 3+）两种格式。
+- 模型资源支持本地部署或 CDN 远程引用，通过 WebGL 在 canvas 上绘制，`position: fixed` 全屏悬浮。
+
+### 对话链路：Chat → 情绪 → TTS → 口型
+
+1. **文字大模型（Chat）**：插件按 OpenAI 兼容的 `messages` 格式调用 `chat.api`，并把 `systemPrompt` 作为系统提示词注入，要求模型在回复首行输出 `#EMOTION#happy` 等情绪标签。
+2. **情绪解析**：插件解析回复首行的情绪标签（兼容 `#EMOTION#happy`、`#happy`、带空格/冒号、行内等多种格式）；若模型漏打标签，会用"用户输入 + 回复内容"做中文/emoji 关键词兜底，驱动对应的动作组与统一气泡文案。
+3. **语音合成（TTS）**：文字生成后调用 `tts.api`（GET `?text=xxx` 返回音频）。**语音生成完毕后，文字打字机输出与语音播放才同时开始**，避免“文字先出、语音后到”。
+4. **口型同步**：`<audio>` 通过 `createMediaElementSource` 接入 Web Audio `AnalyserNode`，每帧读取音量大小驱动嘴部参数（`ParamMouthOpenY` / `PARAM_MOUTH_OPEN_Y` 等自动检测），实现说话时嘴巴张合的实时同步，无需模型特殊配置。
+5. **语音防冲突**：模型动作自带语音时（如点击身体），`motionstart` → 锁定聊天框；`motionend` 回到待机 → 解锁。同时 TTS 播放期间会暂时把模型音量设为 0，结束后恢复，杜绝双语音叠加。
+
+### 思考中与统一气泡
+
+- 请求 Chat / TTS 期间播放 `thinking.motion` 配置的思考动作，提示语显示在统一气泡中。
+- 「思考中」「模型回复文字」「状态提示」统一合并到模型头顶的同一个气泡，不再叠框。
+
+### 后端对接（方式 B）
+
+- 后端 `live2d-ai-web-RD` 通过 `GET /watcher/config.js` 动态生成 `window.L2D_WAIFU_CONFIG`，把 `chat.api` / `tts.api` 指向后端代理，并注入 `bindings` / `modelList` 等绑定信息。
+- 前端 🔀 切换模型时携带 `bindingId` 请求后端，由后端完成「模型 ↔ TTS 服务 + 音色 + 文字模型 + 人设 + 知识库」的级联路由；密钥只保存在后端，前端拿不到任何 API Key。
 
 ---
 
@@ -402,7 +494,7 @@ A：已修复。对话回复期间的情绪动作会优先选择"无自带语音
 A：模型资源较多，需等加载完成（右下角状态显示"待机中"）后再发送。
 
 **Q：左侧菜单的 🔀 切换模型按钮点了没反应？**
-A：🔀 按钮需要配合 `live2d-ai-backend` 使用。若页面配置（`config.js` 或后端 `/watcher/config.js`）中没有 `bindings` / `modelList`（即未在后端「🎭 模型绑定」里配置任何绑定），点击会提示「后台未配置可切换的模型绑定」。请先在后端管理后台添加模型绑定，或用带 `bindings` 的配置。
+A：🔀 按钮需要配合后端 `live2d-ai-web-RD` 使用。若页面配置（`config.js` 或后端 `/watcher/config.js`）中没有 `bindings` / `modelList`（即未在后端「🎭 模型绑定」里配置任何绑定），点击会提示「后台未配置可切换的模型绑定」。请先在后端管理后台添加模型绑定，或用带 `bindings` 的配置。
 
 **Q：TTS 没有声音？**
 A：① 浏览器自动播放策略要求用户先与页面交互（点击一次即可，插件会自动解锁）；② 确认 `tts.enabled: true`；③ 确认接口可用（F12 控制台看是否有报错）。
@@ -463,4 +555,5 @@ live2d-plugin/
 
 - [l2d](https://github.com/hacxy/l2d) — Live2D 渲染引擎
 - [Amatsutsumi/live2d-model](https://github.com/Amatsutsumi/live2d-model) — 示例模型（海伦娜）
+- [Amatsutsumi/live2d-ai-web-RD](https://github.com/Amatsutsumi/live2d-ai-web-RD) — 配套后端（方式 B）
 - 智谱清言（GLM-4-Flash）文字大模型 + 语音合成接口
